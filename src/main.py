@@ -8,7 +8,7 @@ from torch.cuda.amp import autocast
 
 from config_settings import settings
 
-from models.Encoder import myself_net
+from models.Encoder import make_myself_net
 from loss.netloss import NetLoss
 import dataset
 
@@ -114,16 +114,7 @@ if __name__ == "__main__":
     print("test_dataset length: ", len(test_dataset), ", test_loader length: ", len(test_loader))
 
     # model
-    if settings.model == "mini":
-        net = myself_net(channels_list=[8, 16, 32, 64, 128]).cuda()
-    elif settings.model == "tiny":
-        net = myself_net(channels_list=[16, 32, 64, 128, 256]).cuda()
-    elif settings.model == "small":
-        net = myself_net(channels_list=[32, 64, 128, 256, 512]).cuda()
-    elif settings.model == "base":
-        net = myself_net(channels_list=[64, 128, 256, 512, 1024]).cuda()
-    else:
-        raise ValueError("model not found")
+    net = make_myself_net(settings.res_block, settings.res_channels).cuda()
 
     # loss
     loss = NetLoss(settings.max_depth, settings.decay, settings.alpha, settings.beta).cuda()

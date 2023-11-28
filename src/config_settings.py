@@ -9,10 +9,11 @@ class settings:
     dataset_root_path = "../data/nyudepth_hdf5"
     train_csv = "nyudepth_hdf5_train.csv"
     test_csv = "nyudepth_hdf5_val.csv"
-    sparse_density = 0.05
+    sparse_density = 0.005
 
     # model
-    model = "base"
+    res_block = "Bottleneck"  # BasicBlock, Bottleneck
+    res_channels = [64, 128, 256, 256, 256]
 
     # loss
     max_depth = 80.0
