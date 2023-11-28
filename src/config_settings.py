@@ -25,16 +25,16 @@ class settings:
     # Optimizer
     optimizer = "ADAM"  # SGD, ADAM, RMSprop
     lr = 1e-3
-    weight_decay = 1e-4
+    weight_decay = 1e-5
     # SGD
     momentum = 0.9
     # ADAM
-    betas = (0.9, 0.999)
+    betas = (0.9, 0.99)
     epsilon = 1e-8
 
     # Scheduler
-    scheduler = "ReduceLROnPlateau"  # LambdaLR, MultiStepLR, ReduceLROnPlateau
-    LambdaLR_decay = [2, 3, 4]
+    scheduler = "CosineAnnealingLR"  # LambdaLR, MultiStepLR, ReduceLROnPlateau, CosineAnnealingLR
+    LambdaLR_decay = [3, 5, 7]
     LambdaLR_gamma = [1.0, 0.2, 0.04]
     ReduceLROnPlateau_factor = 0.1
     ReduceLROnPlateau_patience = 5

@@ -4,10 +4,10 @@ import math
 
 def evaluate_error(gt_depth, pred_depth):
     assert type(gt_depth) == torch.Tensor, "gt_depth should be torch.Tensor"
-    assert gt_depth.shape(1) == 1, "gt_depth should be (N, 1, H, W)"
+    assert gt_depth.shape[1] == 1, "gt_depth should be (N, 1, H, W)"
 
     assert type(pred_depth) == torch.Tensor, "pred_depth should be torch.Tensor"
-    assert pred_depth.shape(1) == 1, "pred_depth should be (N, 1, H, W)"
+    assert pred_depth.shape[1] == 1, "pred_depth should be (N, 1, H, W)"
 
     assert gt_depth.shape == pred_depth.shape, "gt_depth and pred_depth should have the same shape"
 

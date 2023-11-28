@@ -85,6 +85,9 @@ def make_optimizer_scheduler(target):
         scheduler = lrs.ReduceLROnPlateau(
             optimizer, mode="min", factor=settings.ReduceLROnPlateau_factor, patience=settings.ReduceLROnPlateau_patience, verbose=True
         )
+    elif settings.scheduler == "CosineAnnealingLR":
+        # 余弦退火
+        scheduler = lrs.CosineAnnealingLR(optimizer, T_max=settings.epochs, eta_min=0)
 
     return optimizer, scheduler
 
