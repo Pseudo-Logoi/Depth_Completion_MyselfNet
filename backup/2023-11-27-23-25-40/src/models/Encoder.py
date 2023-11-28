@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.cuda.amp import autocast
 
+
 def convbnlrelu(in_channels, out_channels, kernel_size=3, stride=1, padding=1):
     return nn.Sequential(
         nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride, padding=padding, bias=False),
@@ -70,18 +71,21 @@ class Bottleneck(nn.Module):
     @autocast()
     def forward(self, x):
         identity = x.clone()
-        x = self.relu(self.batch_norm1(self.conv1(x)))
 
-        x = self.relu(self.batch_norm2(self.conv2(x)))
+        x = self.batch_norm1(self.conv1(x))
+        x = self.relu(x)
 
-        x = self.conv3(x)
-        x = self.batch_norm3(x)
+        x = self.batch_norm2(self.conv2(x))
+        x = self.relu(x)
+
+        x = self.batch_norm3(self.conv3(x))
 
         # downsample if needed
         if self.i_downsample is not None:
             identity = self.i_downsample(identity)
         # add identity
         x += identity
+
         x = self.relu(x)
 
         return x
@@ -184,33 +188,33 @@ class up_DKN(nn.Module):
 
 
 class myself_net(nn.Module):
-    def __init__(self, channels_list):
+    def __init__(self, ResBlock, channels_list):
         super().__init__()
 
         self.channels_list = channels_list
 
         self.rgb_convbn = convbn(in_channels=3, out_channels=channels_list[0] // 2, kernel_size=3, stride=1, padding=1)
-        self.rgb_layer1 = self._make_layer(Block, channels_list[0] // 2, channels_list[0], stride=1)
-        self.rgb_layer2 = self._make_layer(Block, channels_list[0], channels_list[1], stride=2)
-        self.rgb_layer3 = self._make_layer(Block, channels_list[1], channels_list[2], stride=2)
-        self.rgb_layer4 = self._make_layer(Block, channels_list[2], channels_list[3], stride=2)
-        self.rgb_layer5 = self._make_layer(Block, channels_list[3], channels_list[4], stride=2)
+        self.rgb_layer1 = self._make_layer(ResBlock, channels_list[0] // 2, channels_list[0], stride=1)
+        self.rgb_layer2 = self._make_layer(ResBlock, channels_list[0] * ResBlock.expansion, channels_list[1], stride=2)
+        self.rgb_layer3 = self._make_layer(ResBlock, channels_list[1] * ResBlock.expansion, channels_list[2], stride=2)
+        self.rgb_layer4 = self._make_layer(ResBlock, channels_list[2] * ResBlock.expansion, channels_list[3], stride=2)
+        self.rgb_layer5 = self._make_layer(ResBlock, channels_list[3] * ResBlock.expansion, channels_list[4], stride=2)
 
         self.dep_convbn = convbn(in_channels=1, out_channels=channels_list[0] // 2, kernel_size=3, stride=1, padding=1)
-        self.dep_layer1 = self._make_layer(Block, channels_list[0] // 2, channels_list[0], stride=1)
-        self.dep_layer2 = self._make_layer(Block, 2 * channels_list[0], channels_list[1], stride=2)
-        self.dep_layer3 = self._make_layer(Block, 2 * channels_list[1], channels_list[2], stride=2)
-        self.dep_layer4 = self._make_layer(Block, 2 * channels_list[2], channels_list[3], stride=2)
-        self.dep_layer5 = self._make_layer(Block, 2 * channels_list[3], channels_list[4], stride=2)
+        self.dep_layer1 = self._make_layer(ResBlock, channels_list[0] // 2, channels_list[0], stride=1)
+        self.dep_layer2 = self._make_layer(ResBlock, 2 * channels_list[0] * ResBlock.expansion, channels_list[1], stride=2)
+        self.dep_layer3 = self._make_layer(ResBlock, 2 * channels_list[1] * ResBlock.expansion, channels_list[2], stride=2)
+        self.dep_layer4 = self._make_layer(ResBlock, 2 * channels_list[2] * ResBlock.expansion, channels_list[3], stride=2)
+        self.dep_layer5 = self._make_layer(ResBlock, 2 * channels_list[3] * ResBlock.expansion, channels_list[4], stride=2)
 
-        self.dense_dep_1_16 = convbnlrelu(in_channels=2 * channels_list[4], out_channels=1, kernel_size=1, stride=1, padding=0)
+        self.dense_dep_1_16 = convbnlrelu(in_channels=2 * channels_list[4] * ResBlock.expansion, out_channels=1, kernel_size=1, stride=1, padding=0)
 
         self.up_pool = nn.Upsample(scale_factor=2, mode="nearest")
 
-        self.DKN_1_8 = up_DKN(feature_channel=channels_list[3], kernel_size=3, filter_size=15, residual=True)
-        self.DKN_1_4 = up_DKN(feature_channel=channels_list[2], kernel_size=3, filter_size=15, residual=True)
-        self.DKN_1_2 = up_DKN(feature_channel=channels_list[1], kernel_size=3, filter_size=15, residual=True)
-        self.DKN_1_1 = up_DKN(feature_channel=channels_list[0], kernel_size=3, filter_size=15, residual=True)
+        self.DKN_1_8 = up_DKN(feature_channel=channels_list[3] * ResBlock.expansion, kernel_size=3, filter_size=15, residual=True)
+        self.DKN_1_4 = up_DKN(feature_channel=channels_list[2] * ResBlock.expansion, kernel_size=3, filter_size=15, residual=True)
+        self.DKN_1_2 = up_DKN(feature_channel=channels_list[1] * ResBlock.expansion, kernel_size=3, filter_size=15, residual=True)
+        self.DKN_1_1 = up_DKN(feature_channel=channels_list[0] * ResBlock.expansion, kernel_size=3, filter_size=15, residual=True)
 
     def _make_layer(self, ResBlock, in_channels, out_channels, stride):
         return ResBlock(
@@ -220,8 +224,8 @@ class myself_net(nn.Module):
             i_downsample=None
             if (in_channels == out_channels and stride == 1)
             else nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=stride),
-                nn.BatchNorm2d(out_channels),
+                nn.Conv2d(in_channels, out_channels * ResBlock.expansion, kernel_size=1, stride=stride),
+                nn.BatchNorm2d(out_channels * ResBlock.expansion),
             ),
         )
 
@@ -247,3 +251,12 @@ class myself_net(nn.Module):
         dep_dense_1_2 = self.DKN_1_2(self.up_pool(dep_dense_1_4), dep_out2)
         dep_dense_1_1 = self.DKN_1_1(self.up_pool(dep_dense_1_2), dep_out1)
         return dep_dense_1_1, dep_dense_1_2, dep_dense_1_4, dep_dense_1_8, dep_dense_1_16
+
+
+def make_myself_net(ResBlock, channels_list):
+    if ResBlock == "BasicBlock":
+        return myself_net(ResBlock=Block, channels_list=channels_list)
+    elif ResBlock == "Bottleneck":
+        return myself_net(ResBlock=Bottleneck, channels_list=channels_list)
+    else:
+        raise NotImplementedError

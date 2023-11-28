@@ -12,7 +12,8 @@ class settings:
     sparse_density = 0.05
 
     # model
-    model = "base"
+    res_block = "BasicBlock"  # BasicBlock, Bottleneck
+    res_channels = [64, 128, 256, 512, 1024]
 
     # loss
     max_depth = 80.0
