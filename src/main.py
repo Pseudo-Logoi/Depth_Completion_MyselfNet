@@ -131,7 +131,10 @@ if __name__ == "__main__":
             train(net, loss, optimizer, train_loader, None)
             loss_val = test(net, loss, test_loader)
 
-            scheduler.step(epoch)
+            if settings.scheduler == "ReduceLROnPlateau":
+                scheduler.step(loss_val)
+            else:
+                scheduler.step()
 
             torch.save(net.state_dict(), os.path.join(output_path, "epoch_%03d_net_loss_%.06f.pth" % (epoch, loss_val)))
             torch.save(optimizer.state_dict(), os.path.join(output_path, "epoch_%03d_optimizer.pth" % epoch))
