@@ -9,7 +9,7 @@ class settings:
     dataset_root_path = "../data/nyudepth_hdf5"
     train_csv = "nyudepth_hdf5_train.csv"
     test_csv = "nyudepth_hdf5_val.csv"
-    sparse_density = 0.05
+    sparse_density = 0.005
 
     # model
     model = "base"
@@ -32,9 +32,9 @@ class settings:
 
     # Scheduler
     scheduler = "LambdaLR"  # LambdaLR, MultiStepLR, ReduceLROnPlateau
-    LambdaLR_decay = [2, 3, 4]
+    LambdaLR_decay = [10, 15, 20]
     LambdaLR_gamma = [1.0, 0.2, 0.04]
 
     # train
     epochs = 100
-    batch_size = 6
+    batch_size = 12
