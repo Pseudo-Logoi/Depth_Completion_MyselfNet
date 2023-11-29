@@ -7,10 +7,9 @@ from torch.cuda.amp import autocast
 # import pytorch_lightning as pl
 
 from config_settings import settings
-
 from models.Encoder import make_myself_net
 from loss.netloss import NetLoss
-import dataset
+from dataset.nyu import NYUDataset
 
 from tqdm import tqdm
 
@@ -91,7 +90,7 @@ if __name__ == "__main__":
     assert torch.cuda.is_available(), "support only cuda"
 
     # dataset
-    train_dataset = dataset.NYUDataset(settings.dataset_root_path, settings.train_csv, settings.sparse_density, "train")
+    train_dataset = NYUDataset(settings.dataset_root_path, settings.train_csv, settings.sparse_density, "train")
     train_loader = DataLoader(
         dataset=train_dataset,
         batch_size=settings.batch_size,
@@ -102,7 +101,7 @@ if __name__ == "__main__":
     )
     print("train_dataset length: ", len(train_dataset), ", train_loader length: ", len(train_loader))
 
-    test_dataset = dataset.NYUDataset(settings.dataset_root_path, settings.test_csv, settings.sparse_density, "test")
+    test_dataset = NYUDataset(settings.dataset_root_path, settings.test_csv, settings.sparse_density, "test")
     test_loader = DataLoader(
         dataset=test_dataset,
         batch_size=settings.batch_size,

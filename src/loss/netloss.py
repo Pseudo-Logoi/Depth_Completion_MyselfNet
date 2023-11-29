@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .l1loss import L1Loss
-from .l2loss import L2Loss
+from loss.l1loss import L1Loss
+from loss.l2loss import L2Loss
 
 
 class NetLoss(nn.Module):

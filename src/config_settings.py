@@ -12,12 +12,12 @@ class settings:
     sparse_density = 0.005
 
     # model
-    res_block = "Bottleneck"  # BasicBlock, Bottleneck
+    res_block = "BasicBlock"  # BasicBlock, Bottleneck
     res_channels = [32, 64, 128, 128, 128]
     # res_channels = [64, 128, 256, 256, 256]
 
     # loss
-    max_depth = 80.0
+    max_depth = 10.0
     decay = 0.8
     alpha = 1.0
     beta = 1.0
