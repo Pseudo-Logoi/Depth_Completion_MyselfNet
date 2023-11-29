@@ -13,7 +13,7 @@ class settings:
 
     # model
     res_block = "Bottleneck"  # BasicBlock, Bottleneck
-    res_channels = [8, 16, 32, 32, 32]
+    res_channels = [32, 64, 128, 128, 128]
     # res_channels = [64, 128, 256, 256, 256]
 
     # loss
@@ -40,5 +40,5 @@ class settings:
     ReduceLROnPlateau_patience = 5
 
     # train
-    epochs = 100
-    batch_size = 6
+    epochs = 10
+    batch_size = 4
