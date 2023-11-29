@@ -10,9 +10,6 @@ class config_settings:
     sparse_density = 0.005
     # tranform
     jitter = 0.2
-    random_crop = True
-    random_crop_height = 384
-    random_crop_width = 512
     # for nyu
     nyu_dataset_root_path = "../data/nyudepth_hdf5"
     nyu_train_csv = "nyudepth_hdf5_train.csv"
@@ -23,6 +20,9 @@ class config_settings:
     kitti_val_mode = "full" # full, select
     kitti_image_height = 352
     kitti_image_width = 1216
+    kitti_random_crop = True
+    kitti_random_crop_height = 320
+    kitti_random_crop_width = 1216
 
     # model
     res_block = "BasicBlock"  # BasicBlock, Bottleneck

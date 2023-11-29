@@ -32,7 +32,8 @@ def load_calib():
     [0  0  1  z][0  0  1  0]  -> [0  0  1  z]
     [0  0  0  1][0  0  0  1]  -> [0  0  0  1]
     """
-    calib = open("dataset/kitti_calib_cam_to_cam.txt", "r")
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    calib = open(current_dir + "/kitti_calib_cam_to_cam.txt", "r")
     lines = calib.readlines()
     P_rect_line = lines[25]
 
@@ -76,8 +77,8 @@ def train_transform(rgb, sparse, target, settings: config_settings):
         rgb = transform_rgb(rgb)
 
     # random crop
-    if settings.random_crop is True:
-        crop_transform = transforms.Compose([transforms.RandomCrop((settings.random_crop_height, settings.random_crop_width))])
+    if settings.kitti_random_crop is True:
+        crop_transform = transforms.Compose([transforms.RandomCrop((settings.kitti_random_crop_height, settings.kitti_random_crop_width))])
         if rgb is not None:
             set_seed(seed)
             rgb = crop_transform(rgb)
