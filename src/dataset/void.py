@@ -11,21 +11,21 @@ import matplotlib.pyplot as plt
 
 
 class VoidDataset(Dataset):
-    def __init__(self, dataset_root_path, which, split):
+    def __init__(self, nyu_dataset_root_path, which, split):
         """
         Args:
-            dataset_root_path (string): Path to the dataset folder.
+            nyu_dataset_root_path (string): Path to the dataset folder.
             which (string): 'void_150', 'void_500' or 'void_1500'.
             split (string): 'train' or 'test' split.
         """
-        self.dataset_root_path = dataset_root_path
+        self.nyu_dataset_root_path = nyu_dataset_root_path
         self.split = split
-        self.absolute_pose_txt = pd.read_csv(os.path.join(dataset_root_path, which, split + "_absolute_pose.txt"))
-        self.ground_truth_txt = pd.read_csv(os.path.join(dataset_root_path, which, split + "_ground_truth.txt"))
-        self.image_txt = pd.read_csv(os.path.join(dataset_root_path, which, split + "_image.txt"))
-        self.intrinsics_txt = pd.read_csv(os.path.join(dataset_root_path, which, split + "_intrinsics.txt"))
-        self.sparse_depth_txt = pd.read_csv(os.path.join(dataset_root_path, which, split + "_sparse_depth.txt"))
-        self.validity_map_txt = pd.read_csv(os.path.join(dataset_root_path, which, split + "_validity_map.txt"))
+        self.absolute_pose_txt = pd.read_csv(os.path.join(nyu_dataset_root_path, which, split + "_absolute_pose.txt"))
+        self.ground_truth_txt = pd.read_csv(os.path.join(nyu_dataset_root_path, which, split + "_ground_truth.txt"))
+        self.image_txt = pd.read_csv(os.path.join(nyu_dataset_root_path, which, split + "_image.txt"))
+        self.intrinsics_txt = pd.read_csv(os.path.join(nyu_dataset_root_path, which, split + "_intrinsics.txt"))
+        self.sparse_depth_txt = pd.read_csv(os.path.join(nyu_dataset_root_path, which, split + "_sparse_depth.txt"))
+        self.validity_map_txt = pd.read_csv(os.path.join(nyu_dataset_root_path, which, split + "_validity_map.txt"))
 
         self.length = len(self.absolute_pose_txt)
 
@@ -51,10 +51,10 @@ class VoidDataset(Dataset):
         a_sparse_depth_name = self.sparse_depth_txt.iloc[idx, 0]
         a_validity_map_name = self.validity_map_txt.iloc[idx, 0]
 
-        a_ground_truth = Image.open(os.path.join(self.dataset_root_path, a_ground_truth_name))
-        a_image = Image.open(os.path.join(self.dataset_root_path, a_image_name))
-        a_sparse_depth = Image.open(os.path.join(self.dataset_root_path, a_sparse_depth_name))
-        a_validity_map = Image.open(os.path.join(self.dataset_root_path, a_validity_map_name))
+        a_ground_truth = Image.open(os.path.join(self.nyu_dataset_root_path, a_ground_truth_name))
+        a_image = Image.open(os.path.join(self.nyu_dataset_root_path, a_image_name))
+        a_sparse_depth = Image.open(os.path.join(self.nyu_dataset_root_path, a_sparse_depth_name))
+        a_validity_map = Image.open(os.path.join(self.nyu_dataset_root_path, a_validity_map_name))
 
         # transform
         a_ground_truth = self.transform(a_ground_truth)
@@ -70,7 +70,7 @@ class VoidDataset(Dataset):
 
 # main
 if __name__ == "__main__":
-    void_dataset = VoidDataset(dataset_root_path="data/void", which="void_1500", split="train")
+    void_dataset = VoidDataset(nyu_dataset_root_path="data/void", which="void_1500", split="train")
     for i in range(3):
         sample = void_dataset[i]
         print(i, sample["gt"].size(), sample["rgbd"].size())

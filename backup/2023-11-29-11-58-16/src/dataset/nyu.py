@@ -11,14 +11,14 @@ import matplotlib.pyplot as plt
 
 
 class NYUDataset(Dataset):
-    def __init__(self, dataset_root_path, csv_file_name, sparse_density, split="train"):
+    def __init__(self, nyu_dataset_root_path, csv_file_name, sparse_density, split="train"):
         """
         sparse_density: void_1500: 0.005, void_500: 0.0016, void_150: 0.0005
         """
         super().__init__()
 
-        self.csv_file = pd.read_csv(os.path.join(dataset_root_path, csv_file_name))
-        self.dataset_root_path = dataset_root_path
+        self.csv_file = pd.read_csv(os.path.join(nyu_dataset_root_path, csv_file_name))
+        self.nyu_dataset_root_path = nyu_dataset_root_path
         self.length = len(self.csv_file)
         self.sparse_density = sparse_density
 
@@ -55,7 +55,7 @@ class NYUDataset(Dataset):
         return self.length
 
     def __getitem__(self, idx):
-        hd5_file_name = os.path.join(self.dataset_root_path, self.csv_file["Name"][idx])
+        hd5_file_name = os.path.join(self.nyu_dataset_root_path, self.csv_file["Name"][idx])
         hd5_file = h5.File(hd5_file_name, "r")
         rgb_h5 = hd5_file["rgb"][:].transpose(1, 2, 0)
         depth_h5 = hd5_file["depth"][:]
@@ -83,7 +83,7 @@ class NYUDataset(Dataset):
 
 # main
 if __name__ == "__main__":
-    nyu_dataset = NYUDataset(dataset_root_path="data/nyudepth_hdf5", csv_file_name="nyudepth_hdf5_train.csv", n_samples=100)
+    nyu_dataset = NYUDataset(nyu_dataset_root_path="data/nyudepth_hdf5", csv_file_name="nyudepth_hdf5_train.csv", n_samples=100)
     for i in range(1):
         sample = nyu_dataset[i]
         # print(i, sample["gt"].size(), sample["rgbd"].size())

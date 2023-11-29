@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 
 class KittiDataset:
-    def __init__(self, dataset_root_path, which, split):
+    def __init__(self, nyu_dataset_root_path, which, split):
         yield
 
     def __len__(self):

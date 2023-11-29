@@ -1,4 +1,4 @@
-class settings:
+class config_settings:
     # 随机性
     seed = 7240
 
@@ -6,10 +6,23 @@ class settings:
     gpus = "0"
 
     # dataset
-    dataset_root_path = "../data/nyudepth_hdf5"
-    train_csv = "nyudepth_hdf5_train.csv"
-    test_csv = "nyudepth_hdf5_val.csv"
+    dataset_choose = "kitti"  # nyu, kitti
     sparse_density = 0.005
+    # tranform
+    jitter = 0.2
+    random_crop = True
+    random_crop_height = 384
+    random_crop_width = 512
+    # for nyu
+    nyu_dataset_root_path = "../data/nyudepth_hdf5"
+    nyu_train_csv = "nyudepth_hdf5_train.csv"
+    nyu_test_csv = "nyudepth_hdf5_val.csv"
+    # for kitti
+    kitti_data_folder = "/root/autodl-tmp/KITTI_Depth_Completion"
+    kitti_data_folder_rgb = "/root/autodl-tmp/KITTI_Depth_Completion/raw"
+    kitti_val_mode = "full" # full, select
+    kitti_image_height = 352
+    kitti_image_width = 1216
 
     # model
     res_block = "BasicBlock"  # BasicBlock, Bottleneck
@@ -42,3 +55,9 @@ class settings:
     # train
     epochs = 10
     batch_size = 4
+
+
+settings = config_settings()
+
+if __name__ == "__main__":
+    print(settings)

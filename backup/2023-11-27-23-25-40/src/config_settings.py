@@ -6,9 +6,9 @@ class settings:
     gpus = "0"
 
     # dataset
-    dataset_root_path = "../data/nyudepth_hdf5"
-    train_csv = "nyudepth_hdf5_train.csv"
-    test_csv = "nyudepth_hdf5_val.csv"
+    nyu_dataset_root_path = "../data/nyudepth_hdf5"
+    nyu_train_csv = "nyudepth_hdf5_train.csv"
+    nyu_test_csv = "nyudepth_hdf5_val.csv"
     sparse_density = 0.05
 
     # model

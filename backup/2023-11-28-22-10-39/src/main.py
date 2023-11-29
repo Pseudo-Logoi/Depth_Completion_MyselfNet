@@ -91,7 +91,7 @@ if __name__ == "__main__":
     assert torch.cuda.is_available(), "support only cuda"
 
     # dataset
-    train_dataset = dataset.NYUDataset(settings.dataset_root_path, settings.train_csv, settings.sparse_density, "train")
+    train_dataset = dataset.NYUDataset(settings.nyu_dataset_root_path, settings.nyu_train_csv, settings.sparse_density, "train")
     train_loader = DataLoader(
         dataset=train_dataset,
         batch_size=settings.batch_size,
@@ -102,7 +102,7 @@ if __name__ == "__main__":
     )
     print("train_dataset length: ", len(train_dataset), ", train_loader length: ", len(train_loader))
 
-    test_dataset = dataset.NYUDataset(settings.dataset_root_path, settings.test_csv, settings.sparse_density, "test")
+    test_dataset = dataset.NYUDataset(settings.nyu_dataset_root_path, settings.nyu_test_csv, settings.sparse_density, "test")
     test_loader = DataLoader(
         dataset=test_dataset,
         batch_size=settings.batch_size,
