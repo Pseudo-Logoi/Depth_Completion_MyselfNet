@@ -3,10 +3,12 @@ class config_settings:
     seed = 7240
 
     # hardware
-    gpus = "0"
+    gpus = "0"  # "0", "0,1", "0,1,2", "0,1,2,3"
+    num_gpus = len(gpus.split(","))
 
     # dataset
-    dataset_choose = "kitti"  # nyu, kitti
+    dataset_choose = "nyu"  # nyu, kitti
+    loader_workers = 4
     sparse_density = 0.005
     # tranform
     jitter = 0.2
@@ -17,7 +19,7 @@ class config_settings:
     # for kitti
     kitti_data_folder = "/root/autodl-tmp/KITTI_Depth_Completion"
     kitti_data_folder_rgb = "/root/autodl-tmp/KITTI_Depth_Completion/raw"
-    kitti_val_mode = "full" # full, select
+    kitti_val_mode = "full"  # full, select
     kitti_image_height = 352
     kitti_image_width = 1216
     kitti_random_crop = True
@@ -49,12 +51,16 @@ class config_settings:
     scheduler = "CosineAnnealingLR"  # LambdaLR, MultiStepLR, ReduceLROnPlateau, CosineAnnealingLR
     LambdaLR_decay = [3, 5, 7]
     LambdaLR_gamma = [1.0, 0.2, 0.04]
-    ReduceLROnPlateau_factor = 0.1
-    ReduceLROnPlateau_patience = 5
+    ReduceLROnPlateau_factor = 0.9
+    ReduceLROnPlateau_patience = 2
 
     # train
     epochs = 10
     batch_size = 4
+    tb_log_folder = "../tb_logs"
+    log_freq = 10
+    train_stage0 = 5
+    train_stage1 = 7
 
 
 settings = config_settings()

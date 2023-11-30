@@ -14,7 +14,7 @@ from config_settings import config_settings
 
 class NYUDataset(Dataset):
     def __init__(self, settings: config_settings, split="train"):
-        assert split in ["train", "test"], "split should be train or test"
+        assert split in ["train", "val"], "split should be train or val"
 
         """
         sparse_density: void_1500: 0.005, void_500: 0.0016, void_150: 0.0005
@@ -23,7 +23,7 @@ class NYUDataset(Dataset):
 
         if split == "train":
             self.csv_file = pd.read_csv(os.path.join(settings.nyu_dataset_root_path, settings.nyu_train_csv))
-        elif split == "test":
+        elif split == "val":
             self.csv_file = pd.read_csv(os.path.join(settings.nyu_dataset_root_path, settings.nyu_test_csv))
 
         self.nyu_dataset_root_path = settings.nyu_dataset_root_path
@@ -82,7 +82,7 @@ class NYUDataset(Dataset):
         rgb_tensor = self.rgb_transform(common_tensor[:3, :, :])
         depth_tensor = self.depth_transform(common_tensor[3:, :, :])
 
-        return {"gt": depth_tensor, "rgb": rgb_tensor, "sqarse_dep": self.create_sparse_depth(depth_tensor), "raw_rgb": rgb_tensor_raw}
+        return {"gt": depth_tensor, "rgb": rgb_tensor, "d": self.create_sparse_depth(depth_tensor), "raw_rgb": rgb_tensor_raw}
 
     def create_sparse_depth(self, depth_image):
         random_mask = torch.bernoulli(torch.ones_like(depth_image, dtype=torch.float32) * self.sparse_density)

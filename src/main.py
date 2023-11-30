@@ -4,7 +4,11 @@ from torch.utils.data import DataLoader
 from torch.utils.data.distributed import DistributedSampler
 from torch.cuda.amp import autocast
 
-# import pytorch_lightning as pl
+from easydict import EasyDict
+from pytorch_lightning import loggers as pl_loggers
+from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
+from pytorch_lightning.profilers import SimpleProfiler
 
 from config_settings import settings
 from models.Encoder import make_myself_net
@@ -29,7 +33,7 @@ def train(model, loss, optimizer, train_loader, val_loader):
 
         # forward
         rgb = sample["rgb"].cuda()
-        sq_dep = sample["sqarse_dep"].cuda()
+        sq_dep = sample["d"].cuda()
         gt = sample["gt"].cuda()
 
         with autocast():

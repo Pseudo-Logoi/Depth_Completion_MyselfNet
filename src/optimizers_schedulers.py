@@ -1,23 +1,7 @@
-"""
-    Non-Local Spatial Propagation Network for Depth Completion
-    Jinsun Park, Kyungdon Joo, Zhe Hu, Chi-Kuei Liu and In So Kweon
-
-    European Conference on Computer Vision (ECCV), Aug 2020
-
-    Project Page : https://github.com/zzangjinsun/NLSPN_ECCV20
-    Author : Jinsun Park (zzangjinsun@kaist.ac.kr)
-
-    ======================================================================
-
-    Some of useful functions are defined here.
-"""
-
-
-import os
-import shutil
 import torch.optim as optim
 import torch.optim.lr_scheduler as lrs
-from config_settings import settings
+
+from config_settings import config_settings
 
 
 class LRFactor:
@@ -34,21 +18,7 @@ class LRFactor:
         return self.gamma[-1]
 
 
-def convert_str_to_num(val, t):
-    val = val.replace("'", "")
-    val = val.replace('"', "")
-
-    if t == "int":
-        val = [int(v) for v in val.split(",")]
-    elif t == "float":
-        val = [float(v) for v in val.split(",")]
-    else:
-        raise NotImplementedError
-
-    return val
-
-
-def make_optimizer_scheduler(target):
+def make_optimizer_scheduler(settings: config_settings, params):
     # optimizer
     kwargs_optimizer = {"lr": settings.lr, "weight_decay": settings.weight_decay}
     if settings.optimizer == "SGD":
@@ -64,8 +34,7 @@ def make_optimizer_scheduler(target):
     else:
         raise NotImplementedError
 
-    trainable = target.param_groups if hasattr(target, "param_groups") else filter(lambda x: x.requires_grad, target.parameters())
-    optimizer = optimizer_class(trainable, **kwargs_optimizer)
+    optimizer = optimizer_class(params, **kwargs_optimizer)
 
     # scheduler
     if settings.scheduler == "LambdaLR":
@@ -90,18 +59,3 @@ def make_optimizer_scheduler(target):
         raise NotImplementedError
 
     return optimizer, scheduler
-
-
-def backup_source_code(backup_directory):
-    ignore_hidden = shutil.ignore_patterns(".", "..", ".git*", "*pycache*", "data", "backup", "output")
-
-    if os.path.exists(backup_directory):
-        shutil.rmtree(backup_directory)
-
-    shutil.copytree("..", backup_directory, ignore=ignore_hidden)
-    os.system("chmod -R g+w {}".format(backup_directory))
-
-
-if __name__ == "__main__":
-    print(convert_str_to_num("1,2,3", "int"))  # [1, 2, 3]
-    backup_source_code("../backup/test_backup")
